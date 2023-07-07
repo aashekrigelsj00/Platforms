@@ -1,0 +1,39 @@
+using System;
+using System.Threading;
+
+class Program
+{
+    static int counter = 0;
+    static object lockObject = new object();
+
+    static void Main(string[] args)
+    {
+        // Создание и запуск нескольких потоков
+        Thread[] threads = new Thread[5];
+        for (int i = 0; i < threads.Length; i++)
+        {
+            threads[i] = new Thread(IncrementCounter);
+            threads[i].Start();
+        }
+
+        // Ожидание завершения всех потоков
+        foreach (Thread thread in threads)
+        {
+            thread.Join();
+        }
+
+        Console.WriteLine("Результат: " + counter);
+    }
+
+    static void IncrementCounter()
+    {
+        for (int i = 0; i < 100000; i++)
+        {
+            // Использование блокировки для синхронизации доступа к общей переменной
+            lock (lockObject)
+            {
+                counter++;
+            }
+        }
+    }
+}
